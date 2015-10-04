@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="initial-scale=1, maximum-scale=1, user-scalable=no, width=device-width">
+    <title></title>
+    <link href="lib/ionic/css/ionic.css" rel="stylesheet">
+    <link href="css/style.css" rel="stylesheet">
+    
+    <script src="lib/ionic/js/ionic.bundle.js"></script>
+    <script src="js/tdcards.js"></script>
+    <script src="lib/collide/collide.js"></script>
+    
+    <script src="cordova.js"></script>
+    
+    <script src="js/app.js"></script>
+</head>
+
+<body ng-app="starter">
+    <ion-side-menus enable-menu-with-back-views="false">
+        <ion-side-menu-content drag-content="false" ng-controller="PlaylistCtrl">
+            <ion-pane style="background: rgba(43, 30, 46, 1)!important">
+                <ion-header-bar class="bar-default wobb-bar">
+                    <button class="button button-icon icon ion-navicon" menu-toggle="left"></button>
+                    <div class="h1 title" id="header-logo">wo<span class="red">b</span>b</div>
+                </ion-header-bar>
+                <td-cards>
+                    <td-card ng-class="{IOSmargin: isIOS === true}" ng-repeat="card in cards" on-destroy="cardDestroyed($index)" on-transition-left="cardSwipedLeft($index)" on-transition-right="cardSwipedRight($index)" on-partial-swipe="cardPartialSwipe(amt)" on-snap-back="cardSnapBack(amt)">
+                        <table class="card-content" ng-click="seeDetails($index)" ng-style="{'background-image':  'url(' + card.image_url + ')'}">
+                            <tr>
+                                <td style="vertical-align: middle; background: rgba(0, 0, 0, .4)">
+                                    <h1 class="card-header">{{ card.title }}</h1>
+                                    <p class="card-company-name">at {{ card.company.name }}</p>
+                                    <div class="card-icon-group">
+                                        <span class="card-icon"><i class="fa fa-map-marker"></i> {{ card.location }}</span>
+                                        <span class="card-icon"><i class="fa fa-briefcase"></i> {{ card.type }}</span>
+                                    </div>
+                                </td>
+                            </tr>
+                        </table>
+                        <div class="no-text"></div>
+                        <div class="yes-text"></div>
+                    </td-card>
+                </td-cards>
+                <div class="haha-no">Reject</div>
+                <div class="haha-yes">Apply</div>
+            </ion-pane>
+        </ion-side-menu-content>
+    </ion-side-menus>
+</body>
+
+</html>
