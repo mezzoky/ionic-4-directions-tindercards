@@ -12,31 +12,25 @@ angular.module('starter', ['ionic', 'ionic.contrib.ui.tinderCards'])
         });
     })
     .controller('PlaylistCtrl', function($scope, $timeout) {
-        $scope.cards = [{
-            title: 'alkdnasdk',
-            image_url: '',
-            location: 'alkdnasdk',
-            company: {
-                name: 'alkdnasdk',
-            },
-            type: 'alkdnasdk',
-        }, {
-            title: '111alkdnasdk',
-            image_url: '',
-            location: 'alk111alkdnasdkdnasdk',
-            company: {
-                name: 'alkdnasdk111alkdnasdk',
-            },
-            type: 'al111alkdnasdkkdnasdk',
-        }, {
-            title: 'three',
-            image_url: '',
-            location: 'threethree',
-            company: {
-                name: 'threethreethree',
-            },
-            type: 'threethreethreethree',
-        }];
+        function getRandomCard() {
+            return {
+                title: Math.random().toString(36).substring(7),
+                image_url: '',
+                location: Math.random().toString(36).substring(7),
+                company: {
+                    name: Math.random().toString(36).substring(7),
+                },
+                type: Math.random().toString(36).substring(7),
+            };
+        }
+        function getRandomCards(arr) {
+            if (arr.length > 1) {
+                return arr;
+            }
+            arr.push(getRandomCard());
+            return getRandomCards(arr);
+        }
+        $scope.cards = getRandomCards([]);
         $scope.isIOS = false;
 
         var applyJob = function(index) {};

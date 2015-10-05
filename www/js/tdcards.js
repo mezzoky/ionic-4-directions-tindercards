@@ -54,7 +54,8 @@
             this.width = this.el.offsetWidth;
 
             this.startX = this.startY = this.x = this.y = 0;
-
+            
+            opts.showTransitionIn && this.transitionIn('pop-in');
             this.bindEvents();
         },
         /**
@@ -70,6 +71,9 @@
             setTimeout(function() {
                 self.el.classList.remove(animationClass + '-start');
             }, 100);
+            setTimeout(function() {
+                self.el.classList.remove(animationClass);
+            }, 300);
         },
 
         isUnderThreshold: function() {
@@ -204,10 +208,11 @@
 
                     // Force hardware acceleration for animation - better performance on first touch
                     el.style.transform = el.style.webkitTransform = 'translate3d(0px, 0px, 0px)';
-
+                    
                     // Instantiate our card view
                     var swipeableCard = new SwipeableCardView({
                         el: el,
+                        showTransitionIn: (tdCardsController.getNumberOfChild() <= 2),
                         onPartialSwipe: function(amt) {
                             tdCardsController.partial(amt);
                             onScopeCallback($scope.onPartialSwipe, {
@@ -241,6 +246,7 @@
                             });
                         },
                         onDestroy: function() {
+                            tdCardsController.dropChild();
                             onScopeCallback($scope.onDestroy);
                         },
                         onSnapBack: function(startX, startY, startRotation) {
@@ -290,6 +296,15 @@
                         Update the stack everytime when a new card is added.
 
                 */
+                var childs = 0;
+                this.getNumberOfChild = function() {
+                    childs += 1;
+                    return childs;
+                };
+                this.dropChild = function() {
+                    childs -= 1;
+                };
+
 
                 var cards;
                 var firstCard, secondCard, thirdCard;

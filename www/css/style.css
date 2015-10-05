@@ -61,3 +61,21 @@ td-card {
   color: white; 
   text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.9);
 }
+
+
+@-webkit-keyframes bounceIn {
+  0% {
+    -webkit-transform: scale(0,0);
+  }
+ 
+  100% {
+    -webkit-transform: scale(1,1);
+  }
+}
+
+.pop-in-start {
+  -webkit-transform: scale(0,0);
+}
+.pop-in {
+  -webkit-animation: bounceIn 0.4s ease-out;
+}

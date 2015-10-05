@@ -26,7 +26,7 @@
                     <div class="h1 title" id="header-logo">wo<span class="red">b</span>b</div>
                 </ion-header-bar>
                 <td-cards>
-                    <td-card ng-class="{IOSmargin: isIOS === true}" ng-repeat="card in cards" on-destroy="cardDestroyed($index)" on-transition-left="cardSwipedLeft($index)" on-transition-right="cardSwipedRight($index)" on-partial-swipe="cardPartialSwipe(amt)" on-snap-back="cardSnapBack(amt)">
+                    <td-card ng-repeat="card in cards" on-destroy="cardDestroyed($index)" on-transition-left="cardSwipedLeft($index)" on-transition-right="cardSwipedRight($index)" on-partial-swipe="cardPartialSwipe(amt)" on-snap-back="cardSnapBack(amt)">
                         <table class="card-content" ng-click="seeDetails($index)" ng-style="{'background-image':  'url(' + card.image_url + ')'}">
                             <tr>
                                 <td style="vertical-align: middle; background: rgba(0, 0, 0, .4)">
