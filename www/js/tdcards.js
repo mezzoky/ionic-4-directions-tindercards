@@ -51,10 +51,12 @@
             this.el = opts.el;
 
             this.parentWidth = this.el.parentNode.offsetWidth;
+            this.parentHeight = this.el.parentNode.offsetHeight;
             this.width = this.el.offsetWidth;
+            this.height = this.el.offsetHeight;
 
             this.startX = this.startY = this.x = this.y = 0;
-            
+
             opts.showTransitionIn && this.transitionIn('pop-in');
             this.bindEvents();
         },
@@ -76,34 +78,23 @@
             }, 300);
         },
 
-        isUnderThreshold: function() {
+        isUnderThresholdX: function() {
             //return true;
-            return Math.abs(this.thresholdAmount) < 0.4;
+            return Math.abs(this.thresholdAmountX) < 0.4;
         },
-
+        isUnderThresholdY: function() {
+            //return true;
+            return Math.abs(this.thresholdAmountY) < 0.4;
+        },
         /**
          * Fly the card out or animate back into resting position.
          */
-        transitionOut: function(e) {
-
-            console.log('this.thresholdAmount=', this.thresholdAmount);
-            console.log('this.x=', this.x);
-            console.log('this.y=', this.y);
-
-            if (this.isUnderThreshold()) {
-                this.onSnapBack(this.x, this.y, this.rotationAngle);
-                return;
-            }
-
-            console.log('discard the card!');
-
-            this.onTransitionOut(this.thresholdAmount);
-
+        swipeOutXEffect: function(e) {
             var angle = Math.atan(e.gesture.deltaX / e.gesture.deltaY);
 
-            var dir = this.thresholdAmount < 0 ? -1 : 1;
+            var dir = this.thresholdAmountX < 0 ? -1 : 1;
             var targetX;
-            if (this.x > 0) {
+            if (dir > 0) {
                 targetX = (this.parentWidth / 2) + (this.width);
             } else {
                 targetX = -(this.parentWidth + this.width);
@@ -115,12 +106,74 @@
             // Fly out
             var rotateTo = this.rotationAngle; //(this.rotationAngle this.rotationDirection * 0.2));// || (Math.random() * 0.4);
 
-            var duration = 0.3 - Math.min(Math.max(Math.abs(e.gesture.velocityX) / 10, 0.05), 0.2);
+            var duration = 0.5 - Math.min(Math.max(Math.abs(e.gesture.velocityX) / 10, 0.05), 0.2);
 
+            console.log('Direction:', dir, 'TargetX:', targetX, 'TargetY:', targetY,
+                        'RotateTo:', rotateTo, 'Duration:', duration
+                );
             ionic.requestAnimationFrame(function() {
                 this.el.style.transform = this.el.style.webkitTransform = 'translate3d(' + targetX + 'px, ' + targetY + 'px,0) rotate(' + this.rotationAngle + 'rad)';
                 this.el.style.transition = this.el.style.webkitTransition = 'all ' + duration + 's ease-in-out';
             }.bind(this));
+            return duration;
+        },
+        swipeOutYEffect: function(e) {
+            var angle = Math.atan(e.gesture.deltaY / e.gesture.deltaX);
+
+            var dir = this.thresholdAmountY < 0 ? -1 : 1;
+            var targettoY;
+            if (dir > 0) {
+                targettoY = (this.parentHeight / 2) + (this.height);
+            } else {
+                targettoY = -(this.parentHeight + this.height);
+            }
+
+            // Target Y is just the "opposite" side of the triangle of targettoY as the adjacent edge (sohcahtoa yo)
+            var tX = targettoY / Math.tan(angle);
+
+            // Fly out
+            var rotateTo = this.rotationAngle; //(this.rotationAngle this.rotationDirection * 0.2));// || (Math.random() * 0.4);
+
+            var duration = 0.5 - Math.min(Math.max(Math.abs(e.gesture.velocityY) / 10, 0.05), 0.2);
+
+            console.log('Direction:', dir, 'TargetX:', tX, 'TargetY:', targettoY,
+                        'RotateTo:', rotateTo, 'Duration:', duration
+                );
+            ionic.requestAnimationFrame(function() {
+                this.el.style.transform = this.el.style.webkitTransform = 'translate3d(' + tX + 'px, ' + targettoY + 'px,0) rotate(' + this.rotationAngle + 'rad)';
+                this.el.style.transition = this.el.style.webkitTransition = 'all ' + duration + 's ease-in-out';
+            }.bind(this));
+
+            return duration;
+        },
+        transitionOut: function(e) {
+
+            console.log('this.thresholdAmountX=', this.thresholdAmountX);
+            console.log('this.thresholdAmountY=', this.thresholdAmountY);
+            if (
+                (!this.isUnderThresholdX() && !this.isUnderThresholdY()) ||
+                (this.isUnderThresholdX() && this.isUnderThresholdY())
+            ) {
+                console.log('onSnapBack on thresholdX:', this.thresholdAmountX,
+                    'thresholdY:',this.thresholdAmountY);
+                this.onSnapBack(this.x, this.y, this.rotationAngle);
+                return;
+            }
+            var mag = Math.sqrt(Math.pow(this.thresholdAmountY, 2) + 
+                Math.pow(this.thresholdAmountX, 2));
+
+            console.log('toBeDemise on thresholdX:', this.thresholdAmountX,
+                    'thresholdY:',this.thresholdAmountY, 'Magnitude:', mag);
+            var direction = !this.isUnderThresholdX() ? 'x' : 'y';
+            
+            this.onTransitionOut(direction, 
+                direction === 'x' ? this.thresholdAmountX : this.thresholdAmountY);
+
+            if (direction === 'x') {
+                duration = this.swipeOutXEffect(e);
+            } else {
+                duration = this.swipeOutYEffect(e);
+            }
 
             //this.onSwipe && this.onSwipe();
 
@@ -162,10 +215,10 @@
             this.el.style.transform = this.el.style.webkitTransform = 'translate3d(' + this.x + 'px, ' + this.y + 'px, 0) rotate(' + (this.rotationAngle || 0) + 'rad)';
 
 
-            this.thresholdAmount = (this.x / (this.parentWidth / 2));
-
+            this.thresholdAmountX = (this.x / (this.parentWidth / 2));
+            this.thresholdAmountY = (this.y / (this.parentHeight / 2));
             setTimeout(function() {
-                this.onPartialSwipe(this.thresholdAmount);
+                this.onPartialSwipe(this.thresholdAmountX);
             }.bind(this));
         },
         _doDragEnd: function(e) {
@@ -196,6 +249,8 @@
             scope: {
                 onTransitionLeft: '&',
                 onTransitionRight: '&',
+                onTransitionTop: '&',
+                onTransitionBottom: '&',
                 onTransitionOut: '&',
                 onPartialSwipe: '&',
                 onSnapBack: '&',
@@ -208,7 +263,7 @@
 
                     // Force hardware acceleration for animation - better performance on first touch
                     el.style.transform = el.style.webkitTransform = 'translate3d(0px, 0px, 0px)';
-                    
+
                     // Instantiate our card view
                     var swipeableCard = new SwipeableCardView({
                         el: el,
@@ -219,28 +274,26 @@
                                 amt: amt
                             });
                         },
-                        onSwipeRight: function() {
-                            console.log('swipeableCard.onSwipeRight')
-                            onScopeCallback($scope.onSwipeRight);
-                        },
-                        onSwipeLeft: function() {
-                            console.log('swipeableCard.onSwipeLeft')
-                            onScopeCallback($scope.onSwipeLeft);
-                        },
-                        onTransitionRight: function() {
-                            console.log('called by swipeableCard.onTransitionOut: swipeableCard.onTransitionRight')
-                            onScopeCallback($scope.onTransitionRight);
-                        },
-                        onTransitionLeft: function() {
-                            console.log('called by swipeableCard.onTransitionOut: swipeableCard.onTransitionLeft')
-                            onScopeCallback($scope.onTransitionLeft);
-                        },
-                        onTransitionOut: function(amt) {
-                            if (amt < 0) {
-                                swipeableCard.onTransitionLeft();
-                            } else {
-                                swipeableCard.onTransitionRight();
+                        onTransitionOut: function(direction, amt) {
+                            if (direction === 'x') {
+                                if (amt < 0) {
+                                    console.log('discarded LEFT')
+                                    onScopeCallback($scope.onTransitionLeft);
+                                } else {
+                                    console.log('discarded RIGHT')
+                                    onScopeCallback($scope.onTransitionRight);
+                                }
                             }
+                            if (direction === 'y') {
+                                if (amt < 0) {
+                                    console.log('discarded TOP')
+                                    onScopeCallback($scope.onTransitionTop);
+                                } else {
+                                    console.log('discarded BOTTOM')
+                                    onScopeCallback($scope.onTransitionBottom);
+                                }
+                            }
+
                             onScopeCallback($scope.onTransitionOut, {
                                 amt: amt
                             });
@@ -268,7 +321,7 @@
 
                             .on('step', function(v) {
                                     //Have the element spring over 400px
-                                    console.log('on step');
+                                    // console.log('on step');
                                     el.style.transform = el.style.webkitTransform = 'translate3d(' + (startX - startX * v) + 'px, ' + (startY - startY * v) + 'px, 0) rotate(' + (startRotation - startRotation * v) + 'rad)';
                                 })
                                 .start();
@@ -305,32 +358,6 @@
                     childs -= 1;
                 };
 
-
-                var cards;
-                var firstCard, secondCard, thirdCard;
-
-                var existingCards, card;
-
-                var i, j;
-
-                var sortCards = function() {
-                    console.log('sortCards')
-                    existingCards = $element[0].querySelectorAll('td-card');
-
-                    for (i = 0; i < existingCards.length; i++) {
-                        card = existingCards[i];
-                        if (!card) continue;
-                        if (i > 0) {
-                            card.style.transform = card.style.webkitTransform = 'translate3d(0, ' + (i * 4) + 'px, 0)';
-                        }
-                        card.style.zIndex = (existingCards.length - i);
-                    }
-                };
-
-                $timeout(function() {
-                    // sortCards();
-                });
-
                 var bringCardUp = function(card, amt, max) {
                     console.log('bringCardUp')
                     var position, newTop;
@@ -350,7 +377,7 @@
                     // thirdCard && bringCardUp(thirdCard, amt, 8);
                 };
             }]
-        }
+        };
     }])
 
     .factory('TDCardDelegate', ['$rootScope', function($rootScope) {

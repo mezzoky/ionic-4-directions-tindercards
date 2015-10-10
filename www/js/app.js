@@ -24,39 +24,37 @@ angular.module('starter', ['ionic', 'ionic.contrib.ui.tinderCards'])
             };
         }
         function getRandomCards(arr) {
-            if (arr.length > 1) {
+            if (arr.length > 2) {
                 return arr;
             }
             arr.push(getRandomCard());
             return getRandomCards(arr);
         }
         $scope.cards = getRandomCards([]);
-        $scope.isIOS = false;
 
-        var applyJob = function(index) {};
-
-        var dislikeJob = function(index) {};
-
-        $scope.cardDestroyed = function(index) {
+        $scope.destroy = function(index) {
             $scope.$emit('card.should.fade.out', null);
             var item = $scope.cards.splice(index, 1)[0];
             $timeout(function() {
                 $scope.cards.unshift(item);
                 console.log(JSON.parse(JSON.stringify($scope.cards)));
-            }, 5000);
+            }, 1200);
         };
 
-        $scope.cardSwipedLeft = function(index) {
-            console.log('$scope.cardSwipedLeft')
-            dislikeJob(index);
+        $scope.top = function(index) {
+            console.log('$scope.cardSwipedTop')
         };
-
-        $scope.cardSwipedRight = function(index) {
+        $scope.bottom = function(index) {
+            console.log('$scope.cardSwipedBottom')
+        };
+        $scope.right = function(index) {
             console.log('$scope.cardSwipedRight')
-            applyJob(index);
+        };
+        $scope.right = function(index) {
+            console.log('$scope.cardSwipedRight')
         };
 
-        $scope.cardPartialSwipe = function(amt) {
+        $scope.partial = function(direction, amt) {
             if (amt > 0) {
                 $scope.$emit('user.swipe.right.for.yes', {
                     amt: amt < 0.1 ? 0 : amt
@@ -67,7 +65,7 @@ angular.module('starter', ['ionic', 'ionic.contrib.ui.tinderCards'])
                 });
             }
         };
-        $scope.cardSnapBack = function() {
+        $scope.snapback = function() {
             $scope.$emit('card.should.fade.out', null);
         };
-    })
+    });
