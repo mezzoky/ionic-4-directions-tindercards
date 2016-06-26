@@ -1,0 +1,124 @@
+/* new css for card */
+
+.td-cards {
+    display: block;
+    height: 100%;
+    margin: 0 10px;
+    margin-top: 55px;
+    position: relative;
+}
+
+.IOSmargin {
+    margin-top: 20px!important;
+}
+
+td-card {
+    position: absolute;
+    left: 0;
+    right: 0;
+    top: 0;
+    bottom: 70px;
+}
+
+.td-card {
+    border: 1px solid #B8B8B8;
+    background-color: #fff;
+    height: 100%;
+   
+}
+
+.card-content {
+    background-size: cover;
+    background-repeat: no-repeat;
+    background-position: center center;
+    background-image: url('../img/no-image-available.jpg');
+    height: 100%;
+    width: 100%;
+}
+
+.card-header {
+    color: white;
+    font-size: 2.3em;
+    padding: .67em .5em;
+    font-weight: 700;
+    text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.8);
+    text-align: center;
+}
+
+.card-company-name {
+    color: white;
+    font-size: 1.5em;
+    padding-left: 10px;
+    padding-right: 10px;
+    padding-top: 10px;
+    padding-bottom: 30px;
+    text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.8);
+    text-align: center;
+    font-weight: 500;
+}
+
+.card-icon-group {
+    padding: 0 2em;
+    text-align: center;
+}
+
+.card-icon {
+    margin-right: 10px;
+    font-size: 1.25em!important;
+    color: white;
+    text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.9);
+}
+
+.card-content-lower-section {
+    vertical-align: middle;
+    text-align: center;
+    background: #474747;
+    height: 150px;
+    width: 100%;
+    position: relative;
+}
+.card-content-lower-section p {
+    padding: 0 10px;
+    margin: 0;
+    color: white;
+}
+.rounded {
+    font-size: 3em;
+    color: white;
+    margin: auto;
+    padding: 5px 15px;
+    border-radius: 50%;
+    margin-bottom: 10px;
+}
+
+.card-button-panel {
+    position: absolute;
+    width: 100%;
+    top: -20px
+}
+
+.card-button {
+    display: inline-block;
+    text-align: center;
+    width: 32%;
+}
+
+.icon:before {}
+
+
+@-webkit-keyframes bounceIn {
+    0% {
+        -webkit-transform: scale(0, 0);
+    }
+    100% {
+        -webkit-transform: scale(1, 1);
+    }
+}
+
+.pop-in-start {
+    -webkit-transform: scale(0, 0);
+}
+
+.pop-in {
+    -webkit-animation: bounceIn 0.4s ease-out;
+}
